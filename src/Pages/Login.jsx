@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../Context/AuthContext";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const navigate = useNavigate();
@@ -12,41 +12,35 @@ function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !password || !role) {
+    if (!email || !password || !role) {
       toast.error("All fields are required.");
       return;
     }
     
-    const userData = { name: username, role };
-    login(userData);
-    toast.success("Logged in successfully!");
-    if (role === "admin") navigate("/dashboard/admin");
-    else if (role === "owner") navigate("/dashboard/owner");
-    else navigate("/dashboard/user");
-  };
-
-  const loginBg = {
-    minHeight: "100vh",
-    minWidth: "100vw",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "flex-end",
-    background: `linear-gradient(rgba(30,40,60,0.75), rgba(30,40,60,0.75)), url('/image.jpeg') no-repeat center center fixed`,
-    backgroundSize: "cover",
+    const userData = { email, password, role };
+    const result = login(userData); 
+    if (result && result.role) {
+      toast.success("Logged in successfully!");
+      if (result.role === "admin") navigate("/dashboard/admin");
+      else if (result.role === "owner") navigate("/dashboard/owner");
+      else navigate("/dashboard/user");
+    } else {
+      toast.error("Invalid email or password.");
+    }
   };
 
   return (
-    <div style={loginBg}>
-      <div className="login-container">
+    <div className="page-bg">
+      <div className="login-container centered-flex">
         <h2>Login</h2>
         <form onSubmit={handleSubmit} className="login-form">
-          <label htmlFor="username" style={{ display: "none" }}>Username or Email</label>
+          <label htmlFor="email" style={{ display: "none" }}>Email</label>
           <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username or Email"
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
             required
           />
           <label htmlFor="password" style={{ display: "none" }}>Password</label>

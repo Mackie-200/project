@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 const DataContext = createContext();
 
 const initialLots = [
-  { id: 1, name: "Downtown Lot", location: "Downtown", owner: "bob" },
-  { id: 2, name: "Mall Lot", location: "Mall Area", owner: "bob" },
-  { id: 3, name: "Airport Lot", location: "Airport", owner: "alice" },
+  { id: 1, name: "Downtown Lot", description: "Central city parking", host_id: "bob", created_at: new Date().toISOString() },
+  { id: 2, name: "Mall Lot", description: "Mall Area parking", host_id: "bob", created_at: new Date().toISOString() },
+  { id: 3, name: "Airport Lot", description: "Airport parking", host_id: "alice", created_at: new Date().toISOString() },
 ];
 
 const initialSpaces = [
@@ -23,13 +24,18 @@ const initialUsers = [
 export function DataProvider({ children }) {
   const [lots, setLots] = useState(initialLots);
   const [spaces, setSpaces] = useState(initialSpaces);
-  const [bookings, setBookings] = useState([]); // {username, spaceId, startTime, endTime, status}
+  const [bookings, setBookings] = useState([]); 
   const [users, setUsers] = useState(initialUsers);
+  const [payments, setPayments] = useState([]);
 
   const addLot = (lot) => {
     setLots((prev) => [
       ...prev,
-      { ...lot, id: prev.length ? prev[prev.length - 1].id + 1 : 1 },
+      {
+        ...lot,
+        id: prev.length ? prev[prev.length - 1].id + 1 : 1,
+        created_at: new Date().toISOString(),
+      },
     ]);
   };
 
@@ -61,16 +67,18 @@ export function DataProvider({ children }) {
     setBookings((prev) => [
       ...prev,
       {
-        ...booking,
+        id: uuidv4(),
+        user_id: booking.user_id,
+        space_id: booking.space_id,
+        start_time: booking.start_time,
+        end_time: booking.end_time,
         status: booking.status || 'pending',
-        startTime: booking.startTime,
-        endTime: booking.endTime
-      }
+      },
     ]);
   };
 
-  const deleteBooking = (username, spaceId) => {
-    setBookings((prev) => prev.filter((b) => !(b.username === username && b.spaceId === spaceId)));
+  const deleteBooking = (user_id, space_id) => {
+    setBookings((prev) => prev.filter((b) => !(b.user_id === user_id && b.space_id === space_id)));
   };
 
   const updateBookingStatus = (bookingIdx, status) => {
@@ -81,12 +89,26 @@ export function DataProvider({ children }) {
     setUsers((prev) => prev.filter((u) => u.username !== username));
   };
 
+  const addPayment = (payment) => {
+    setPayments((prev) => [
+      ...prev,
+      {
+        id: uuidv4(),
+        reservation_id: payment.reservation_id,
+        amount: payment.amount,
+        method: payment.method,
+        paid_at: new Date().toISOString(),
+      },
+    ]);
+  };
+
   return (
     <DataContext.Provider value={{
       lots, addLot, editLot, deleteLot,
       spaces, addParkingSpace, editParkingSpace, deleteParkingSpace,
       bookings, addBooking, deleteBooking,
-      users, setUsers, deleteUser, updateBookingStatus
+      users, setUsers, deleteUser, updateBookingStatus,
+      payments, addPayment
     }}>
       {children}
     </DataContext.Provider>
