@@ -9,6 +9,12 @@ function DashboardSelect() {
   useEffect(() => {
     if (!user) {
       navigate("/login");
+    } else if (user.role === "user") {
+      navigate("/dashboard/user");
+    } else if (user.role === "owner") {
+      navigate("/dashboard/owner");
+    } else if (user.role === "admin") {
+      navigate("/dashboard/admin");
     }
   }, [user, navigate]);
 
@@ -17,18 +23,10 @@ function DashboardSelect() {
   return (
     <div className="page-bg">
       <div className="dashboard-select-container">
-        <h2>Choose Your Dashboard</h2>
-        <div style={{ marginTop: "2rem" }}>
-          {user.role === "user" && (
-            <button onClick={() => navigate("/dashboard/user")} className="dashboard-btn">User Dashboard</button>
-          )}
-          {user.role === "owner" && (
-            <button onClick={() => navigate("/dashboard/owner")} className="dashboard-btn">Owner Dashboard</button>
-          )}
-          {user.role === "admin" && (
-            <button onClick={() => navigate("/dashboard/admin")} className="dashboard-btn">Admin Dashboard</button>
-          )}
-        </div>
+        <h2>Redirecting to your dashboard...</h2>
+        {!(user.role === "user" || user.role === "owner" || user.role === "admin") && (
+          <div style={{ color: "red", marginTop: 24 }}>Unknown role: {user.role}</div>
+        )}
       </div>
     </div>
   );

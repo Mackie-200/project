@@ -8,6 +8,7 @@ import SpacesList from "../Components/AdminDashboard/SpacesList";
 import LotsList from "../Components/AdminDashboard/LotsList";
 import ReservationsList from "../Components/AdminDashboard/ReservationsList";
 import PaymentsList from "../Components/AdminDashboard/PaymentsList";
+import LotAnalytics from "../Components/AdminDashboard/LotAnalytics";
 
 function AdminDashboard() {
   const { user } = useAuth();
@@ -178,14 +179,14 @@ function AdminDashboard() {
     }
   };
 
-  // Helper: get user by id
+  
   const getUserById = (id) => users.find(u => u.id === id || u.username === id || u.email === id);
-  // Helper: get space by id
+  
   const getSpaceById = (id) => spaces.find(s => s.id === id);
 
   return (
-    <div className="page-bg">
-      <div className="dashboard-container dashboard-admin">
+    <div className="page-bg" style={{ padding: 0, margin: 0 }}>
+      <div className="dashboard-container dashboard-admin" style={{ padding: 0, margin: 0, maxWidth: '100vw', width: '100vw', borderRadius: 0 }}>
         <h2>Admin Dashboard</h2>
         <p>Welcome! Here you can manage users and parking spaces.</p>
         <DashboardStats
@@ -224,6 +225,12 @@ function AdminDashboard() {
           editParkingSpace={editParkingSpace}
           deleteParkingSpace={deleteParkingSpace}
           toast={toast}
+        />
+        <LotAnalytics
+          lots={lots}
+          spaces={spaces}
+          bookings={bookings}
+          payments={payments}
         />
         <LotsList
           lots={lots}

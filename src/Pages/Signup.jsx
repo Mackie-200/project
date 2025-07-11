@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../Context/AuthContext";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -9,6 +10,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
   const navigate = useNavigate();
+  const { signup } = useAuth();
 
   const validateEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -32,9 +34,16 @@ function Signup() {
       toast.error("Passwords do not match.");
       return;
     }
-    
-    toast.success("Signup successful! Please log in.");
-    navigate("/login");
+    const result = signup({ name: username, email, phone: "", password, role });
+    if (result && result.error) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success("Signup successful! You are now logged in.");
+    // Redirect based on role
+    if (result.role === "admin") navigate("/dashboard/admin");
+    else if (result.role === "owner") navigate("/dashboard/owner");
+    else navigate("/dashboard/user");
   };
 
   return (

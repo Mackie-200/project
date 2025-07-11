@@ -12,8 +12,8 @@ const mockUsers = [
   },
   {
     id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
+    name: "Irene Smith",
+    email: "irenes@gmail.com",
     phone: "0987654321",
     passwordHash: "mypassword",
     role: "owner",
@@ -30,6 +30,7 @@ const mockUsers = [
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [users, setUsers] = useState([...mockUsers]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("psf_user");
@@ -37,13 +38,14 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = ({ email, password, role }) => {
+    // Accept any email and password for now
     const foundUser = {
-      id: "demo-id",
+      id: Date.now().toString(),
       name: email.split("@")[0] || "Demo User",
       email,
       phone: "0000000000",
       passwordHash: password,
-      role: role || "user", 
+      role: role || "user",
     };
     setUser(foundUser);
     localStorage.setItem("psf_user", JSON.stringify(foundUser));
@@ -55,8 +57,27 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("psf_user");
   };
 
+  const signup = ({ name, email, phone, password, role }) => {
+    if (users.some((u) => u.email === email)) {
+      return { error: "Email already registered" };
+    }
+    const newUser = {
+      id: Date.now().toString(),
+      name,
+      email,
+      phone,
+      passwordHash: password,
+      role: role || "user",
+    };
+    const updatedUsers = [...users, newUser];
+    setUsers(updatedUsers);
+    setUser(newUser);
+    localStorage.setItem("psf_user", JSON.stringify(newUser));
+    return newUser;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

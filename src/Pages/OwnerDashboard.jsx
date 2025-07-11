@@ -90,8 +90,8 @@ function OwnerDashboard() {
   };
 
   return (
-    <div className="page-bg">
-      <div className="dashboard-container dashboard-owner">
+    <div className="page-bg" style={{ padding: 0, margin: 0 }}>
+      <div className="dashboard-container dashboard-owner" style={{ padding: 0, margin: 0, maxWidth: '100vw', width: '100vw', borderRadius: 0 }}>
         <h2>Owner Dashboard</h2>
         <p>Welcome! Here you can manage your parking lots and spaces.</p>
         <section style={{ marginTop: "1.5rem", marginBottom: "2rem" }}>

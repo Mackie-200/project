@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 const DataContext = createContext();
 
 const initialLots = [
-  { id: 1, name: "Downtown Lot", description: "Central city parking", host_id: "bob", created_at: new Date().toISOString() },
-  { id: 2, name: "Mall Lot", description: "Mall Area parking", host_id: "bob", created_at: new Date().toISOString() },
-  { id: 3, name: "Airport Lot", description: "Airport parking", host_id: "alice", created_at: new Date().toISOString() },
+  { id: 1, name: "Downtown Lot", description: "Central city parking", host_id: "bob", created_at: new Date().toISOString(), lat: 40.7128, lng: -74.0060 },
+  { id: 2, name: "Mall Lot", description: "Mall Area parking", host_id: "bob", created_at: new Date().toISOString(), lat: 40.7580, lng: -73.9855 },
+  { id: 3, name: "Airport Lot", description: "Airport parking", host_id: "alice", created_at: new Date().toISOString(), lat: 40.6413, lng: -73.7781 },
 ];
 
 const initialSpaces = [

@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { useData } from "../Context/DataContext";
 import { toast } from "react-toastify";
+import UserReservations from "../Components/UserDashboard/UserReservations";
+import SpaceAvailabilityCalendar from "../Components/UserDashboard/SpaceAvailabilityCalendar";
+import { useNotifications } from "../Context/NotificationContext";
+import LotsMap from "../Components/UserDashboard/LotsMap";
 
 const paymentMethods = ["card", "mobile money", "cash"];
 
 function UserDashboard() {
-  const { user } = useAuth();
-  const { spaces, bookings, addBooking, deleteBooking, payments, addPayment } = useData();
+  const { user, logout } = useAuth();
+  const { spaces, bookings, addBooking, deleteBooking, payments, addPayment, lots } = useData();
+  const { addNotification } = useNotifications();
   const [search, setSearch] = useState("");
   const [bookingSpaceId, setBookingSpaceId] = useState(null);
   const [startTime, setStartTime] = useState("");
@@ -15,21 +20,30 @@ function UserDashboard() {
   const [payReservationId, setPayReservationId] = useState(null);
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState(paymentMethods[0]);
+  const [calendarSpaceId, setCalendarSpaceId] = useState(null);
+  const [calendarDate, setCalendarDate] = useState("");
+  const [locationFilter, setLocationFilter] = useState("Harare");
 
   if (!user) return null;
 
-  // Show spaces not owned by the user and only active
-  const availableSpaces = spaces.filter((s) => s.owner !== user.name && s.status === 'active');
-  // Filter by search
-  const filteredSpaces = availableSpaces.filter(
-    (space) =>
-      (space.name?.toLowerCase().includes(search.toLowerCase()) || "") ||
-      (space.location?.toLowerCase().includes(search.toLowerCase()) || "")
+  
+  // Filter lots and spaces by location
+  const filteredLots = lots.filter(lot =>
+    locationFilter === "Harare"
+      ? lot.location?.toLowerCase().includes("harare")
+      : !lot.location?.toLowerCase().includes("harare")
   );
-  // Show bookings for this user
+  const filteredSpaces = spaces.filter(space =>
+    filteredLots.some(lot => lot.id === space.lotId)
+  );
+  const spacesWithCoords = filteredSpaces.map(space => {
+    const lot = filteredLots.find(lot => lot.id === space.lotId);
+    return lot ? { ...space, lat: lot.lat, lng: lot.lng } : space;
+  });
+  
   const userBookings = bookings.filter((b) => b.user_id === user.id);
 
-  // Helper: get payment for a reservation
+  
   const getPaymentForReservation = (reservation_id) => payments.find(p => p.reservation_id === reservation_id);
 
   const handleBook = (spaceId) => {
@@ -48,7 +62,7 @@ function UserDashboard() {
       toast.error("End time must be after start time.");
       return;
     }
-    // Prevent overlapping bookings for the same space
+    
     const overlap = bookings.some(
       (b) =>
         b.space_id === bookingSpaceId &&
@@ -112,6 +126,10 @@ function UserDashboard() {
       method,
     });
     toast.success("Payment successful!");
+    addNotification({
+      message: `Payment of $${amount} (${method}) for your reservation was successful!`,
+      type: "success",
+    });
     setPayReservationId(null);
     setAmount("");
     setMethod(paymentMethods[0]);
@@ -123,13 +141,84 @@ function UserDashboard() {
     setMethod(paymentMethods[0]);
   };
 
+  // Quick stats
+  const activeBookings = bookings.filter(b => b.user_id === user.id && new Date(b.end_time) > new Date());
+  const unpaidReservations = bookings.filter(b => b.user_id === user.id && b.status === 'pending');
+
+  // Status badge helper
+  const getStatusBadge = (status) => {
+    let color = '#888';
+    if (status === 'pending') color = '#f59e42';
+    if (status === 'confirmed') color = '#43cea2';
+    if (status === 'cancelled') color = '#ef4444';
+    return <span style={{ background: color, color: '#fff', borderRadius: 8, padding: '2px 10px', marginLeft: 8, fontSize: '0.95em' }}>{status}</span>;
+  };
+
+  // Add a temporary test space if none exist
+  let testSpaces = filteredSpaces;
+  if (testSpaces.length === 0) {
+    testSpaces = [{
+      id: 'test1',
+      name: 'Test Space',
+      location: 'Test Location',
+    }];
+  }
+
   return (
-    <div className="page-bg">
-      <div className="dashboard-container dashboard-user">
+    <div className="page-bg" style={{ padding: 0, margin: 0 }}>
+      <div className="dashboard-container dashboard-user" style={{ padding: 0, margin: 0, maxWidth: '100vw', width: '100vw', borderRadius: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, padding: '2rem 2.5rem 0 2.5rem' }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: '1.2em' }}>{user.name}</div>
+            <div style={{ color: '#2563eb', fontSize: '1em' }}>{user.email}</div>
+            <div style={{ color: '#888', fontSize: '0.98em' }}>Role: {user.role}</div>
+          </div>
+          <button
+            onClick={logout}
+            style={{
+              background: '#2563eb',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '0.5em 1.2em',
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(30,40,60,0.08)',
+              transition: 'background 0.2s, transform 0.2s',
+            }}
+            onMouseOver={e => (e.currentTarget.style.background = '#1746b3')}
+            onMouseOut={e => (e.currentTarget.style.background = '#2563eb')}
+          >
+            Logout
+          </button>
+        </div>
+        <div style={{ display: 'flex', gap: '1.5em', marginBottom: 32, width: '100vw', maxWidth: '100vw', borderRadius: 0 }}>
+          <div style={{ flex: 1, background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(30,40,60,0.10)', padding: '2em 0', textAlign: 'center', minWidth: 0, margin: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '2em', color: '#2563eb', marginBottom: 8 }}>{activeBookings.length}</div>
+            <div style={{ color: '#888', fontSize: '1.1em', letterSpacing: 0.5, fontWeight: 500 }}>Active Bookings</div>
+          </div>
+          <div style={{ flex: 1, background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(30,40,60,0.10)', padding: '2em 0', textAlign: 'center', minWidth: 0, margin: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '2em', color: '#2563eb', marginBottom: 8 }}>{userBookings.length}</div>
+            <div style={{ color: '#888', fontSize: '1.1em', letterSpacing: 0.5, fontWeight: 500 }}>Total Bookings</div>
+          </div>
+          <div style={{ flex: 1, background: '#fff', borderRadius: 12, boxShadow: '0 4px 24px rgba(30,40,60,0.10)', padding: '2em 0', textAlign: 'center', minWidth: 0, margin: 0 }}>
+            <div style={{ fontWeight: 700, fontSize: '2em', color: '#ef4444', marginBottom: 8 }}>{unpaidReservations.length}</div>
+            <div style={{ color: '#888', fontSize: '1.1em', letterSpacing: 0.5, fontWeight: 500 }}>Unpaid Reservations</div>
+          </div>
+        </div>
         <h2>User Dashboard</h2>
         <p>Welcome! Here you can search and book parking spaces.</p>
         <section style={{ marginTop: "2rem" }}>
           <h3>Available Parking Spaces</h3>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>
+              Show spaces in:
+              <select value={locationFilter} onChange={e => setLocationFilter(e.target.value)} style={{ marginLeft: 8 }}>
+                <option value="Harare">Harare</option>
+                <option value="Other">Other</option>
+              </select>
+            </label>
+          </div>
           <input
             type="text"
             placeholder="Search by name or location..."
@@ -137,11 +226,12 @@ function UserDashboard() {
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: "100%", marginBottom: "1rem" }}
           />
+          <LotsMap lots={filteredLots} spaces={spacesWithCoords} onBook={handleBook} addBooking={addBooking} user={user} bookings={bookings} searchTerm={search} />
           <ul>
-            {filteredSpaces.length === 0 ? (
+            {testSpaces.length === 0 ? (
               <li>No available spaces.</li>
             ) : (
-              filteredSpaces.map((space) => (
+              testSpaces.map((space) => (
                 <li key={space.id}>
                   {space.name} ({space.location})
                   <button
@@ -150,20 +240,36 @@ function UserDashboard() {
                   >
                     Book
                   </button>
-                  {bookingSpaceId === space.id && (
-                    <form onSubmit={handleBookSubmit} className="booking-time-form">
+                  <button
+                    onClick={() => setCalendarSpaceId(calendarSpaceId === space.id ? null : space.id)}
+                    style={{ marginLeft: "0.5rem" }}
+                  >
+                    {calendarSpaceId === space.id ? "Hide Calendar" : "Show Availability"}
+                  </button>
+                  {calendarSpaceId === space.id && (
+                    <div style={{ marginTop: 8 }}>
                       <label>
+                        Date: <input type="date" value={calendarDate} onChange={e => setCalendarDate(e.target.value)} />
+                      </label>
+                      <SpaceAvailabilityCalendar
+                        space={space}
+                        bookings={bookings}
+                        date={calendarDate}
+                      />
+                    </div>
+                  )}
+                  {bookingSpaceId === space.id && (
+                    <form onSubmit={handleBookSubmit} className="booking-time-form" style={{ display: 'flex', alignItems: 'center', gap: '1em', marginTop: '1em' }}>
+                      <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         Start Time:
                         <input type="datetime-local" value={startTime} onChange={e => setStartTime(e.target.value)} required />
                       </label>
-                      <label>
+                      <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                         End Time:
                         <input type="datetime-local" value={endTime} onChange={e => setEndTime(e.target.value)} required />
                       </label>
-                      <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button type="submit">Confirm</button>
-                        <button type="button" onClick={handleBookCancel} style={{ background: '#ccc', color: '#222' }}>Cancel</button>
-                      </div>
+                      <button type="submit">Confirm Booking</button>
+                      <button type="button" onClick={handleBookCancel} style={{ marginLeft: 8 }}>Cancel</button>
                     </form>
                   )}
                 </li>
@@ -173,78 +279,13 @@ function UserDashboard() {
         </section>
         <section style={{ marginTop: "2rem" }}>
           <h3>Your Booking History</h3>
-          <ul>
-            {userBookings.length === 0 ? (
-              <li>No bookings yet.</li>
-            ) : (
-              userBookings.map((booking, idx) => {
-                const space = spaces.find((s) => s.id === booking.space_id);
-                const payment = getPaymentForReservation(booking.id);
-                return (
-                  <li key={booking.id}>
-                    {space ? `${space.name} (${space.location})` : "Unknown Space"}
-                    <span style={{ marginLeft: '1rem', fontWeight: 600 }}>
-                      {booking.start_time && booking.end_time ? `${new Date(booking.start_time).toLocaleString()} - ${new Date(booking.end_time).toLocaleString()}` : ''}
-                    </span>
-                    <span className={`status-badge ${booking.status || 'pending'}`} style={{ marginLeft: '1rem' }}>
-                      {booking.status ? booking.status.charAt(0).toUpperCase() + booking.status.slice(1) : 'Pending'}
-                    </span>
-                    {payment ? (
-                      <span style={{ marginLeft: '1rem', color: 'green', fontWeight: 600 }}>
-                        Paid: ${payment.amount} ({payment.method}) at {new Date(payment.paid_at).toLocaleString()}
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => handlePayClick(booking)}
-                        style={{ marginLeft: "1rem", padding: "0.3rem 0.8rem", borderRadius: "6px", border: "none", background: "#43cea2", color: "#fff", cursor: "pointer" }}
-                      >
-                        Pay
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleCancelBooking(booking.space_id)}
-                      style={{ marginLeft: "1rem", padding: "0.3rem 0.8rem", borderRadius: "6px", border: "none", background: "#dc3545", color: "#fff", cursor: "pointer" }}
-                    >
-                      Cancel
-                    </button>
-                    {/* Payment form modal */}
-                    {payReservationId === booking.id && !payment && (
-                      <form onSubmit={handlePaySubmit} style={{ marginTop: 8, background: '#f8fafc', borderRadius: 8, padding: 12, boxShadow: '0 2px 8px rgba(30,40,60,0.10)' }}>
-                        <div style={{ marginBottom: 8 }}>
-                          <label>
-                            Amount:
-                            <input
-                              type="number"
-                              value={amount}
-                              onChange={e => setAmount(e.target.value)}
-                              min="0"
-                              step="0.01"
-                              required
-                              style={{ marginLeft: 8 }}
-                            />
-                          </label>
-                        </div>
-                        <div style={{ marginBottom: 8 }}>
-                          <label>
-                            Method:
-                            <select value={method} onChange={e => setMethod(e.target.value)} style={{ marginLeft: 8 }}>
-                              {paymentMethods.map(m => (
-                                <option key={m} value={m}>{m}</option>
-                              ))}
-                            </select>
-                          </label>
-                        </div>
-                        <div style={{ display: 'flex', gap: '0.5rem' }}>
-                          <button type="submit">Pay</button>
-                          <button type="button" onClick={handlePayCancel} style={{ background: '#ccc', color: '#222' }}>Cancel</button>
-                        </div>
-                      </form>
-                    )}
-                  </li>
-                );
-              })
-            )}
-          </ul>
+          <UserReservations
+            reservations={bookings}
+            spaces={spaces}
+            lots={[]}
+            payments={payments}
+            user={user}
+          />
         </section>
       </div>
     </div>

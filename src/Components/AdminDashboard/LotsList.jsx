@@ -20,7 +20,7 @@ function LotsList({
           <li>No lots found.</li>
         ) : (
           lots.map((lot) => (
-            <li key={lot.id} style={{ marginBottom: 8 }}>
+            <li key={lot.id} style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               {editLotId === lot.id ? (
                 <>
                   <input
@@ -37,32 +37,36 @@ function LotsList({
                     placeholder="Description"
                     style={{ marginRight: 8 }}
                   />
-                  <button
-                    onClick={() => {
-                      if (!editLotName || !editLotDescription) return;
-                      editLot(lot.id, { name: editLotName, description: editLotDescription });
-                      setEditLotId(null);
-                      setEditLotName("");
-                      setEditLotDescription("");
-                      toast.success("Lot updated!");
-                    }}
-                    style={{ marginRight: 4 }}
-                  >Save</button>
-                  <button onClick={() => { setEditLotId(null); setEditLotName(""); setEditLotDescription(""); }}>Cancel</button>
+                  <div style={{ display: 'flex', gap: '0.5em' }}>
+                    <button
+                      onClick={() => {
+                        if (!editLotName || !editLotDescription) return;
+                        editLot(lot.id, { name: editLotName, description: editLotDescription });
+                        setEditLotId(null);
+                        setEditLotName("");
+                        setEditLotDescription("");
+                        toast.success("Lot updated!");
+                      }}
+                      style={{ marginRight: 4 }}
+                    >Save</button>
+                    <button onClick={() => { setEditLotId(null); setEditLotName(""); setEditLotDescription(""); }}>Cancel</button>
+                  </div>
                 </>
               ) : (
                 <>
                   <span><strong>{lot.name}</strong>: {lot.description}</span>
-                  <button onClick={() => { setEditLotId(lot.id); setEditLotName(lot.name); setEditLotDescription(lot.description); }} style={{ marginLeft: 8 }}>Edit</button>
-                  <button
-                    onClick={() => {
-                      if (window.confirm("Are you sure you want to delete this lot?")) {
-                        deleteLot(lot.id);
-                        toast.success("Lot deleted!");
-                      }
-                    }}
-                    style={{ marginLeft: 4, color: 'red' }}
-                  >Delete</button>
+                  <div style={{ display: 'flex', gap: '0.5em', marginLeft: 'auto' }}>
+                    <button onClick={() => { setEditLotId(lot.id); setEditLotName(lot.name); setEditLotDescription(lot.description); }}>Edit</button>
+                    <button
+                      onClick={() => {
+                        if (window.confirm("Are you sure you want to delete this lot?")) {
+                          deleteLot(lot.id);
+                          toast.success("Lot deleted!");
+                        }
+                      }}
+                      style={{ color: 'red' }}
+                    >Delete</button>
+                  </div>
                 </>
               )}
             </li>
