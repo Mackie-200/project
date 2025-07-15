@@ -1,0 +1,334 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.landing-page-container {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
+}
+
+.video-background {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+.video-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.35);
+  z-index: 1;
+  pointer-events: none;
+}
+.video-bg {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem 3rem;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.navbar-logo {
+  position: absolute;
+  left: 3rem;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  margin-right: 0;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 2.5rem;
+  margin: 0 auto;
+  padding: 0;
+  align-items: center;
+  height: 100%;
+}
+
+.navbar-links li a {
+  color: #fff;
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.navbar-links li a:hover {
+  background: #2563eb;
+  color: #fff;
+}
+
+.hero-content {
+  position: absolute;
+  /* Move from top: 2.7rem; to a more centered position */
+  top: 50%;
+  left: 2.5rem;
+  transform: translateY(-50%);
+  z-index: 2;
+  text-align: left;
+  color: #fff;
+  width: auto;
+  max-width: 420px;
+  box-shadow: none;
+  backdrop-filter: none;
+  border-radius: 0;
+  padding: 2rem 1.5rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hero-content p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.55rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  border: 2px solid #fff;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.cta-btn:hover {
+  background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.07);
+  box-shadow: 0 6px 24px rgba(30,40,60,0.18);
+}
+
+.features-section {
+  position: relative;
+  z-index: 2;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  width: 100vw;
+  max-width: none;
+  margin: 2.5rem 0;
+  padding: 2rem 0 1.5rem 0;
+  border-radius: 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+
+.features-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.features-section ul {
+  padding-left: 1.2em;
+  margin: 0;
+}
+
+.features-section li {
+  margin-bottom: 0.7em;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+.about-section {
+  position: relative;
+  z-index: 2;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  width: 100vw;
+  max-width: none;
+  height: 100vh;
+  margin: 0;
+  padding: 2rem 0 1.5rem 0;
+  border-radius: 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.about-section h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.about-section .about-text {
+  text-align: left;
+  padding: 0 7vw;
+}
+
+.features-section .features-text {
+  text-align: left;
+  padding: 0 7vw;
+}
+
+.info-section {
+  width: 100%;
+  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+  color: #1a237e;
+  padding: 3.5rem 0 3rem 0;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(30,40,60,0.10);
+  margin: 0 auto;
+}
+.info-section h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.3rem;
+  color: #0d47a1;
+  letter-spacing: 1px;
+}
+.info-section p {
+  font-size: 1.25rem;
+  max-width: 700px;
+  margin: 0 auto 2.2rem auto;
+  line-height: 1.7;
+  color: #263238;
+}
+.info-features-row {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  margin-top: 2.2rem;
+}
+.info-feature-box {
+  min-width: 220px;
+  background: #fff;
+  border-radius: 18px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 2px 16px rgba(30,40,60,0.10);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.info-feature-box:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 8px 32px rgba(30,40,60,0.16);
+}
+.info-feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+.info-feature-title {
+  font-weight: 700;
+  font-size: 1.18rem;
+  margin-bottom: 6px;
+  color: #1976d2;
+}
+.info-feature-desc {
+  color: #37474f;
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.reservation-btn-group {
+  display: flex;
+  gap: 0.5rem;
+}
+@media (max-width: 600px) {
+  .reservation-btn-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    margin-top: 0.5rem;
+  }
+  .reservation-btn-group button {
+    width: 100%;
+    font-size: 1.08em;
+    padding: 0.7em 0.5em;
+  }
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    padding: 1rem 1.2rem;
+  }
+  .navbar-logo {
+    font-size: 1.3rem;
+  }
+  .navbar-links {
+    gap: 1.2rem;
+  }
+  .hero-content {
+    padding: 2rem 1rem 1.5rem 1rem;
+    max-width: 95vw;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+  .cta-btn {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+  }
+  .about-section {
+    padding: 1.2rem 0;
+    border-radius: 0;
+  }
+  .about-section .about-text {
+    padding: 0 2vw;
+  }
+  .features-section .features-text {
+    padding: 0 2vw;
+  }
+  .features-section {
+    padding: 1.2rem 0;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .navbar-links {
+    display: none !important;
+  }
+} 

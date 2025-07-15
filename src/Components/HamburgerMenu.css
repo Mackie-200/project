@@ -1,0 +1,103 @@
+.hamburger-nav {
+  position: fixed;
+  top: 0.7rem;
+  right: 1rem;
+  z-index: 1000;
+}
+
+.hamburger-icon {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  z-index: 1100;
+}
+.hamburger-icon span {
+  display: block;
+  width: 28px;
+  height: 4px;
+  margin: 4px 0;
+  background: #0d577a;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+.hamburger-icon.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-icon.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+.hamburger-menu {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(30,40,60,0.18);
+  border-radius: 10px;
+  min-width: 180px;
+  max-width: 90vw;
+  padding: 1rem 0.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0;
+  pointer-events: none;
+  word-break: break-word;
+}
+.hamburger-menu.show {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.hamburger-menu a, .hamburger-menu .logout-btn {
+  color: #0d577a;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  background: none;
+  border: none;
+  padding: 0.5rem 0.2rem;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+.hamburger-menu a:hover, .hamburger-menu .logout-btn:hover {
+  background: #e0eafc;
+}
+.hamburger-user {
+  color: #185a9d;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hamburger-icon {
+    display: flex;
+  }
+  .hamburger-menu {
+    right: 0.5rem;
+  }
+}
+
+@media (min-width: 901px) {
+  .hamburger-icon, .hamburger-menu {
+    display: none !important;
+  }
+} 
