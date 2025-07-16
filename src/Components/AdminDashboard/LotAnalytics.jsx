@@ -37,7 +37,7 @@ function LotAnalytics({ lots, spaces, bookings, payments }) {
               <li key={lot.id} style={{ marginBottom: 32, padding: 16, borderBottom: "1px solid #e0e0e0", borderRadius: 12, background: '#fff', boxShadow: '0 2px 8px rgba(30,40,60,0.06)' }}>
                 <div style={{ fontWeight: 700, fontSize: '1.2em', marginBottom: 8 }}>{lot.name} <span style={{ color: '#888', fontWeight: 400 }}>({lot.location})</span></div>
                 <div style={{ marginBottom: 8 }}>Spaces: <b>{totalSpaces}</b> | Occupied: <b>{occupiedSpaces}</b> | Occupancy Rate: <b>{occupancyRate}%</b></div>
-                <div style={{ marginBottom: 8 }}>Revenue: <b>${lotRevenue.toFixed(2)}</b></div>
+                <div style={{ marginBottom: 8 }}>Revenue: <b>${Number(lotRevenue || 0).toFixed(2)}</b></div>
                 <div style={{ marginBottom: 8 }}>Most Used Space: <b>{mostUsed ? `${mostUsed.space.space_number || mostUsed.space.name} (${mostUsed.count} bookings)` : "N/A"}</b></div>
                 <div>Least Used Space: <b>{leastUsed ? `${leastUsed.space.space_number || leastUsed.space.name} (${leastUsed.count} bookings)` : "N/A"}</b></div>
               </li>
