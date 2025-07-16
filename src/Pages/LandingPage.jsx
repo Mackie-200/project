@@ -7,19 +7,6 @@ const LandingPage = () => {
   return (
     <>
       <div className="landing-page-container">
-        {/* Navigation Bar */}
-        <nav className="navbar">
-          <div className="navbar-logo">ParkEase</div>
-          <HamburgerMenu />
-          <ul className="navbar-links">
-            <li><a href="#home">Home</a></li>
-            <li><Link to="/features">Features</Link></li>
-            <li><Link to="/about">About</Link></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/signup">Signup</a></li>
-          </ul>
-        </nav>
-
         {/* Video Background */}
         <div className="video-background">
           <video autoPlay loop muted playsInline className="video-bg" poster="/background.jpg">

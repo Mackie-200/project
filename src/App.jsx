@@ -19,6 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { NotificationProvider } from "./Context/NotificationContext";
 import Notifications from "./Components/Notifications";
 import Footer from "./Components/Footer";
+import Navbar from "./Components/Navbar";
 
 
 function RequireRole({ role, children }) {
@@ -34,6 +35,7 @@ function AppContent() {
     <div className="App">
       {/* <HamburgerMenu user={user} onLogout={logout} /> */}
       <Notifications />
+      <Navbar />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />

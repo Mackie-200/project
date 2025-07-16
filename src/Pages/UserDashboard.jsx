@@ -266,28 +266,30 @@ function UserDashboard() {
                     </div>
                   )}
                   {bookingSpaceId === space.id && (
-                    <form onSubmit={handleBookSubmit} className="booking-time-form" style={{ display: 'flex', alignItems: 'center', gap: '1em', marginTop: '1em' }}>
-                      <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        Start Time:
-                        <input type="datetime-local" value={startTime} onChange={e => setStartTime(e.target.value)} required />
-                      </label>
-                      <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        End Time:
-                        <input type="datetime-local" value={endTime} onChange={e => setEndTime(e.target.value)} required />
-                      </label>
-                      <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        Price:
-                        <select value={selectedPrice} onChange={e => setSelectedPrice(e.target.value)} required>
-                          <option value="3.29">$3.29</option>
-                          <option value="2.40">$2.40</option>
-                          <option value="3.00">$3.00</option>
-                          <option value="5.00">$5.00</option>
-                          <option value="8.00">$8.00</option>
-                        </select>
-                      </label>
-                      <button type="submit">Confirm Booking</button>
-                      <button type="button" onClick={handleBookCancel} style={{ marginLeft: 8 }}>Cancel</button>
-                    </form>
+                    <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                      <form onSubmit={handleBookSubmit} className="booking-time-form" style={{ display: 'flex', alignItems: 'center', gap: '1em', marginTop: '1em' }}>
+                        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          Start Time:
+                          <input type="datetime-local" value={startTime} onChange={e => setStartTime(e.target.value)} required />
+                        </label>
+                        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          End Time:
+                          <input type="datetime-local" value={endTime} onChange={e => setEndTime(e.target.value)} required />
+                        </label>
+                        <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          Price:
+                          <select value={selectedPrice} onChange={e => setSelectedPrice(e.target.value)} required>
+                            <option value="3.29">$3.29</option>
+                            <option value="2.40">$2.40</option>
+                            <option value="3.00">$3.00</option>
+                            <option value="5.00">$5.00</option>
+                            <option value="8.00">$8.00</option>
+                          </select>
+                        </label>
+                        <button type="submit">Confirm Booking</button>
+                        <button type="button" onClick={handleBookCancel} style={{ marginLeft: 8 }}>Cancel</button>
+                      </form>
+                    </div>
                   )}
                 </li>
               ))
