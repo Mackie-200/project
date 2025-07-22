@@ -1,13 +1,27 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #222;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
 #root {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .App {
@@ -17,6 +31,9 @@ body {
   align-items: center;
   justify-content: center;
   background: #f4f8fb;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .home-container, .login-container, .signup-container, .dashboard-container {
@@ -25,9 +42,11 @@ body {
   border-radius: 12px;
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
   text-align: center;
-  margin: 2rem 0;
-  max-width: 480px;
+  margin: 2rem auto;
+  max-width: min(480px, 90vw);
   width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .dashboard-container {
@@ -38,10 +57,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  width: 100vw;
+  width: 100%;
   max-width: 100vw;
   border-radius: 0 !important;
-  margin: 0 auto;
+  margin: 0;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .dashboard-container h2 {
@@ -60,10 +81,12 @@ body {
   background: #fff;
   box-shadow: 0 2px 12px rgba(30,40,60,0.08);
   padding: 2rem 1.5rem;
-  margin: 2rem 0;
+  margin: 2rem auto;
   width: 100%;
   border-radius: 14px;
-  max-width: 100vw;
+  max-width: calc(100vw - 2rem);
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .dashboard-container h3 {
@@ -201,23 +224,143 @@ button[disabled] {
   }
 }
 
+/* Enhanced Responsive Design */
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .home-container, .login-container, .signup-container {
+    max-width: min(90%, calc(100vw - 2rem));
+    padding: 1.5rem 2rem;
+    margin: 1rem auto;
+  }
+  
+  .dashboard-container {
+    padding: 1rem;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  .dashboard-container section {
+    max-width: calc(100vw - 4rem);
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+  
+  .enhanced-box, .home-links {
+    padding: 1.5rem;
+    gap: 1rem;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Mobile Landscape */
+@media (max-width: 768px) {
+  .home-container, .login-container, .signup-container {
+    max-width: calc(100vw - 2rem);
+    padding: 1.5rem 1rem;
+    margin: 1rem auto;
+    width: 100%;
+  }
+  
+  .dashboard-container {
+    padding: 0.5rem;
+    width: 100%;
+    max-width: 100vw;
+  }
+  
+  .dashboard-container section {
+    max-width: calc(100vw - 2rem);
+    margin: 1rem auto;
+    padding: 1.5rem 1rem;
+  }
+  
+  .login-form, .signup-form {
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .login-form input, .signup-form input, .login-form select, .signup-form select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .login-form button, .signup-form button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* Mobile Portrait */
 @media (max-width: 600px) {
   .home-container, .login-container, .signup-container, .dashboard-container, .dashboard-admin, .dashboard-owner, .dashboard-user, .dashboard-select-container {
     width: 100% !important;
-    max-width: 100vw !important;
+    max-width: calc(100vw - 1rem) !important;
     box-sizing: border-box;
+    margin: 0.5rem auto;
+    padding: 1rem 0.75rem;
+    overflow-x: hidden;
   }
+  
+  .dashboard-container {
+    margin: 0 !important;
+    padding: 0.5rem !important;
+    max-width: 100vw !important;
+  }
+  
   .dashboard-container h2, .dashboard-admin h2, .dashboard-owner h2, .dashboard-user h2, .dashboard-select-container h2 {
     font-size: 1.1rem;
+    margin: 0.5rem 0;
+    word-wrap: break-word;
   }
+  
   .dashboard-container section, .dashboard-admin section, .dashboard-owner section, .dashboard-user section {
-    padding: 0.5rem 0.1rem;
+    padding: 1rem 0.75rem;
+    margin: 0.75rem auto;
+    max-width: calc(100vw - 1.5rem);
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   .home-container h1, .home-container p {
     font-size: 1rem;
+    word-wrap: break-word;
   }
+  
   .enhanced-box, .home-links {
-    padding: 1rem 0.2rem !important;
+    padding: 1rem 0.75rem !important;
+    max-width: calc(100vw - 1.5rem);
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
+  .login-form, .signup-form {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .login-form input, .signup-form input, .login-form select, .signup-form select {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    box-sizing: border-box;
+    margin-bottom: 0.75rem;
+  }
+  
+  .login-form button, .signup-form button {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    box-sizing: border-box;
     min-width: unset;
   }
   .enhanced-box a, .home-links a, .dashboard-btn, .login-form button, .signup-form button {
@@ -248,16 +391,90 @@ button[disabled] {
 
 @media (max-width: 400px) {
   .home-container, .login-container, .signup-container, .dashboard-container, .dashboard-admin, .dashboard-owner, .dashboard-user, .dashboard-select-container {
-    padding: 0.3rem 0.05rem;
+    padding: 0.5rem 0.25rem;
     border-radius: 4px;
     font-size: 0.95rem;
+    max-width: calc(100vw - 0.5rem) !important;
+    margin: 0.25rem auto;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
+  
+  .dashboard-container {
+    padding: 0.25rem !important;
+    margin: 0 !important;
+    max-width: 100vw !important;
+  }
+  
+  .dashboard-container section {
+    max-width: calc(100vw - 0.75rem);
+    margin: 0.25rem auto;
+    padding: 0.5rem 0.25rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
   .dashboard-container h2, .dashboard-admin h2, .dashboard-owner h2, .dashboard-user h2, .dashboard-select-container h2 {
     font-size: 0.95rem;
+    word-wrap: break-word;
+    margin: 0.25rem 0;
   }
-  .enhanced-box a, .home-links a, .dashboard-btn, .login-form button, .signup-form button {
+  
+  .login-form input, .signup-form input, .login-form select, .signup-form select {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .login-form button, .signup-form button {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+    width: 100%;
     font-size: 0.95rem;
-    padding: 0.5rem 0;
+  }
+  
+  .search-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .map-container {
+    height: 300px;
+    border-radius: 8px;
+  }
+  
+  .search-areas-info,
+  .search-debug-info {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .responsive-features-content {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .features-title {
+    font-size: 1.25rem;
+  }
+  
+  .features-list li {
+    padding: 0.4rem;
+    font-size: 0.85rem;
+  }
+  
+  .search-map-header {
+    font-size: 1rem;
+  }
+  
+  .search-map-title {
+    font-size: 1rem;
+  }
+  
+  .map-container {
+    height: 250px;
   }
 }
 

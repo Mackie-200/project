@@ -6,26 +6,35 @@ import { useAuth } from "../Context/AuthContext";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || !role) {
-      toast.error("All fields are required.");
+    if (!email || !password) {
+      toast.error("Email and password are required.");
       return;
     }
     
-    const userData = { email, password, role };
-    const result = login(userData); 
-    if (result && result.role) {
-      toast.success("Logged in successfully!");
-      if (result.role === "admin") navigate("/dashboard/admin");
-      else if (result.role === "owner") navigate("/dashboard/owner");
-      else navigate("/dashboard/user");
-    } else {
-      toast.error("Invalid email or password.");
+    setIsLoading(true);
+    try {
+      const result = await login({ email, password });
+      if (result.success) {
+        // Navigate based on user role
+        const userRole = result.user.role;
+        if (userRole === "admin") {
+          navigate("/dashboard/admin");
+        } else if (userRole === "owner") {
+          navigate("/dashboard/owner");
+        } else {
+          navigate("/dashboard/user");
+        }
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,19 +78,24 @@ function Login() {
               style={{ flex: 1, border: 'none', outline: 'none', background: 'transparent', color: '#185a9d', fontSize: '1rem', padding: '0.7rem 0' }}
             />
           </div>
-          <label htmlFor="role" style={{ display: "none" }}>Role</label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              padding: '0.75rem',
+              backgroundColor: isLoading ? '#94a3b8' : '#2563eb',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s'
+            }}
           >
-            <option value="">Select user role please</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-            <option value="owner">Owner</option>
-          </select>
-          <button type="submit">Login</button>
+            {isLoading ? 'Logging in...' : 'Login'}
+          </button>
         </form>
       </div>
     </div>

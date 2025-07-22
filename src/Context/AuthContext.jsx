@@ -1,83 +1,132 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
-const mockUsers = [
-  {
-    id: "1",
-    name: "micheal mutisi",
-    email: "john@example.com",
-    phone: "1234567890",
-    passwordHash: "password123", 
-    role: "admin",
-  },
-  {
-    id: "2",
-    name: "Irene Smith",
-    email: "irenes@gmail.com",
-    phone: "0987654321",
-    passwordHash: "mypassword",
-    role: "owner",
-  },
-  {
-    id: "3",
-    name: "Bob User",
-    email: "bob@example.com",
-    phone: "5555555555",
-    passwordHash: "userpass",
-    role: "user",
-  },
-];
+
+// API Base URL
+const API_BASE_URL = 'http://localhost:5000/api';
+
+// API Helper Functions
+const apiCall = async (endpoint, options = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  // Add auth token if available
+  const token = localStorage.getItem('psf_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(url, config);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.message || 'API request failed');
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('API Error:', error);
+    throw error;
+  }
+};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [users, setUsers] = useState([...mockUsers]);
+  const [loading, setLoading] = useState(true);
 
+  // Check for existing token on app load
   useEffect(() => {
-    const storedUser = localStorage.getItem("psf_user");
-    if (storedUser) setUser(JSON.parse(storedUser));
+    const checkAuth = async () => {
+      const token = localStorage.getItem('psf_token');
+      if (token) {
+        try {
+          const response = await apiCall('/auth/me');
+          setUser(response.data.user);
+        } catch (error) {
+          console.error('Auth check failed:', error);
+          localStorage.removeItem('psf_token');
+          localStorage.removeItem('psf_user');
+        }
+      }
+      setLoading(false);
+    };
+    checkAuth();
   }, []);
 
-  const login = ({ email, password, role }) => {
-    // Accept any email and password for now
-    const foundUser = {
-      id: Date.now().toString(),
-      name: email.split("@")[0] || "Demo User",
-      email,
-      phone: "0000000000",
-      passwordHash: password,
-      role: role || "user",
-    };
-    setUser(foundUser);
-    localStorage.setItem("psf_user", JSON.stringify(foundUser));
-    return foundUser;
+  const login = async ({ email, password }) => {
+    try {
+      setLoading(true);
+      const response = await apiCall('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const { user: userData, token } = response.data;
+      
+      // Store token and user data
+      localStorage.setItem('psf_token', token);
+      localStorage.setItem('psf_user', JSON.stringify(userData));
+      setUser(userData);
+      
+      toast.success('Login successful!');
+      return { success: true, user: userData };
+    } catch (error) {
+      toast.error(error.message || 'Login failed');
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("psf_user");
+    localStorage.removeItem('psf_token');
+    localStorage.removeItem('psf_user');
+    toast.success('Logged out successfully');
   };
 
-  const signup = ({ name, email, phone, password, role }) => {
-    if (users.some((u) => u.email === email)) {
-      return { error: "Email already registered" };
+  const signup = async ({ name, email, phone, password, role, businessName }) => {
+    try {
+      setLoading(true);
+      const response = await apiCall('/auth/register', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          name, 
+          email, 
+          phone, 
+          password, 
+          role: role || 'user',
+          businessName 
+        }),
+      });
+      
+      const { user: userData, token } = response.data;
+      
+      // Store token and user data
+      localStorage.setItem('psf_token', token);
+      localStorage.setItem('psf_user', JSON.stringify(userData));
+      setUser(userData);
+      
+      toast.success('Registration successful!');
+      return { success: true, user: userData };
+    } catch (error) {
+      toast.error(error.message || 'Registration failed');
+      return { success: false, error: error.message };
+    } finally {
+      setLoading(false);
     }
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      phone,
-      passwordHash: password,
-      role: role || "user",
-    };
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-    setUser(newUser);
-    localStorage.setItem("psf_user", JSON.stringify(newUser));
-    return newUser;
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, loading }}>
       {children}
     </AuthContext.Provider>
   );
