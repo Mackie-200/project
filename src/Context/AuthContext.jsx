@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 const AuthContext = createContext();
 
 // API Base URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // API Helper Functions
 const apiCall = async (endpoint, options = {}) => {
@@ -125,8 +125,12 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // API helper function for authenticated requests
+  const apiRequest = async (endpoint, options = {}) => {
+    return await apiCall(endpoint, options);
+  };
   return (
-    <AuthContext.Provider value={{ user, login, logout, signup, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, signup, loading, apiRequest }}>
       {children}
     </AuthContext.Provider>
   );

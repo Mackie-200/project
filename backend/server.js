@@ -6,9 +6,9 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
-// const parkingSpaceRoutes = require('./routes/parkingSpaces');
-// const bookingRoutes = require('./routes/bookings');
-// const adminRoutes = require('./routes/admin');
+const parkingSpaceRoutes = require('./routes/parkingSpaces');
+const bookingRoutes = require('./routes/bookings');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -46,9 +46,9 @@ mongoose.connect(uri, {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/contact', contactRoutes);
-// app.use('/api/parking-spaces', parkingSpaceRoutes);
-// app.use('/api/bookings', bookingRoutes);
-// app.use('/api/admin', adminRoutes);
+app.use('/api/parking-spaces', parkingSpaceRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

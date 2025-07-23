@@ -6,9 +6,12 @@ import { useAuth } from "../Context/AuthContext";
 function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -16,7 +19,7 @@ function Signup() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !email || !password || !confirmPassword || !role) {
       toast.error("All fields are required.");
@@ -34,16 +37,34 @@ function Signup() {
       toast.error("Passwords do not match.");
       return;
     }
-    const result = signup({ name: username, email, phone: "", password, role });
-    if (result && result.error) {
-      toast.error(result.error);
-      return;
+    
+    setIsLoading(true);
+    try {
+      const result = await signup({ 
+        name: username, 
+        email, 
+        phone, 
+        password, 
+        role,
+        businessName: role === 'owner' ? businessName : undefined
+      });
+      
+      if (result.success) {
+        // Navigate based on role
+        const userRole = result.user.role;
+        if (userRole === "admin") {
+          navigate("/dashboard/admin");
+        } else if (userRole === "owner") {
+          navigate("/dashboard/owner");
+        } else {
+          navigate("/dashboard/user");
+        }
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    toast.success("Signup successful! You are now logged in.");
-    // Redirect based on role
-    if (result.role === "admin") navigate("/dashboard/admin");
-    else if (result.role === "owner") navigate("/dashboard/owner");
-    else navigate("/dashboard/user");
   };
 
   return (
@@ -68,6 +89,14 @@ function Signup() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
             required
+          />
+          <label htmlFor="phone" style={{ display: "none" }}>Phone</label>
+          <input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone (optional)"
           />
           <label htmlFor="password" style={{ display: "none" }}>Password</label>
           <input
@@ -96,10 +125,31 @@ function Signup() {
           >
             <option value="">Select user role please</option>
             <option value="user">User</option>
-            <option value="admin">Admin</option>
             <option value="owner">Owner</option>
+            <option value="admin">Admin</option>
           </select>
-          <button type="submit">Sign Up</button>
+          {role === 'owner' && (
+            <>
+              <label htmlFor="businessName" style={{ display: "none" }}>Business Name</label>
+              <input
+                id="businessName"
+                type="text"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Business Name"
+              />
+            </>
+          )}
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            style={{
+              backgroundColor: isLoading ? '#94a3b8' : '#2563eb',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {isLoading ? 'Creating Account...' : 'Sign Up'}
+          </button>
         </form>
       </div>
     </div>
