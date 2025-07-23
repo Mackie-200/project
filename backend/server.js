@@ -4,8 +4,8 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-// Import routes
 const authRoutes = require('./routes/auth');
+const contactRoutes = require('./routes/contact');
 // const parkingSpaceRoutes = require('./routes/parkingSpaces');
 // const bookingRoutes = require('./routes/bookings');
 // const adminRoutes = require('./routes/admin');
@@ -21,7 +21,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static files for uploaded images
+// Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Database connection
@@ -36,20 +36,21 @@ mongoose.connect(uri, {
   useUnifiedTopology: true,
 })
 .then(() => {
-  console.log('MongoDB database connection established successfully');
+  console.log('✅ MongoDB database connection established');
 })
 .catch((error) => {
-  console.error('MongoDB connection error:', error);
+  console.error('❌ MongoDB connection error:', error);
   process.exit(1);
 });
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/contact', contactRoutes);
 // app.use('/api/parking-spaces', parkingSpaceRoutes);
 // app.use('/api/bookings', bookingRoutes);
 // app.use('/api/admin', adminRoutes);
 
-// Health check endpoint
+// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
@@ -67,6 +68,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
+      contact: '/api/contact',
       parkingSpaces: '/api/parking-spaces',
       bookings: '/api/bookings',
       admin: '/api/admin',
@@ -75,11 +77,10 @@ app.get('/', (req, res) => {
   });
 });
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  
-  // Mongoose validation error
+
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map(e => e.message);
     return res.status(400).json({
@@ -88,8 +89,7 @@ app.use((err, req, res, next) => {
       errors
     });
   }
-  
-  // Mongoose duplicate key error
+
   if (err.code === 11000) {
     const field = Object.keys(err.keyValue)[0];
     return res.status(400).json({
@@ -97,23 +97,15 @@ app.use((err, req, res, next) => {
       message: `${field} already exists`
     });
   }
-  
-  // JWT errors
+
   if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid token'
-    });
+    return res.status(401).json({ success: false, message: 'Invalid token' });
   }
-  
+
   if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
-      success: false,
-      message: 'Token expired'
-    });
+    return res.status(401).json({ success: false, message: 'Token expired' });
   }
-  
-  // Default error
+
   res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Internal Server Error'
@@ -135,6 +127,7 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
+// Start server
 app.listen(port, () => {
   console.log(`🚀 Server is running on port: ${port}`);
   console.log(`📍 Environment: ${process.env.NODE_ENV || 'development'}`);
