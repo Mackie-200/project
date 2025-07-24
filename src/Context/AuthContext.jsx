@@ -64,6 +64,7 @@ export function AuthProvider({ children }) {
   const login = async ({ email, password }) => {
     try {
       setLoading(true);
+      console.log('Attempting login with:', { email });
       const response = await apiCall('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
@@ -79,6 +80,7 @@ export function AuthProvider({ children }) {
       toast.success('Login successful!');
       return { success: true, user: userData };
     } catch (error) {
+      console.error('Login error:', error);
       toast.error(error.message || 'Login failed');
       return { success: false, error: error.message };
     } finally {
@@ -96,6 +98,7 @@ export function AuthProvider({ children }) {
   const signup = async ({ name, email, phone, password, role, businessName }) => {
     try {
       setLoading(true);
+      console.log('Attempting signup with:', { name, email, phone, role });
       const response = await apiCall('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ 
@@ -118,6 +121,7 @@ export function AuthProvider({ children }) {
       toast.success('Registration successful!');
       return { success: true, user: userData };
     } catch (error) {
+      console.error('Signup error:', error);
       toast.error(error.message || 'Registration failed');
       return { success: false, error: error.message };
     } finally {

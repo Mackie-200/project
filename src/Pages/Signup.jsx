@@ -45,20 +45,12 @@ function Signup() {
         email, 
         phone, 
         password, 
-        role,
-        businessName: role === 'owner' ? businessName : undefined
+        role: 'user' // Default role set to user
       });
       
       if (result.success) {
-        // Navigate based on role
-        const userRole = result.user.role;
-        if (userRole === "admin") {
-          navigate("/dashboard/admin");
-        } else if (userRole === "owner") {
-          navigate("/dashboard/owner");
-        } else {
-          navigate("/dashboard/user");
-        }
+        // Navigate to user dashboard since all new users are 'user' role
+        navigate("/dashboard/user");
       }
     } catch (error) {
       console.error('Signup error:', error);
