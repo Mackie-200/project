@@ -8,7 +8,7 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("user");
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -18,7 +18,7 @@ function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !email || !password || !confirmPassword || !role) {
+    if (!username || !email || !password || !confirmPassword) {
       toast.error("All fields are required.");
       return;
     }
@@ -87,18 +87,7 @@ function Signup() {
             placeholder="Confirm Password"
             required
           />
-          <label htmlFor="role" style={{ display: "none" }}>Role</label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          >
-            <option value="">Select user role please</option>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-            <option value="owner">Owner</option>
-          </select>
+
           <button type="submit">Sign Up</button>
         </form>
       </div>
