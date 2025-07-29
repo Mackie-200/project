@@ -6,9 +6,16 @@ import { useAuth } from "../Context/AuthContext";
 function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+<<<<<<< HEAD
   const [role, setRole] = useState("user");
+=======
+  const [role, setRole] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+>>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -16,7 +23,7 @@ function Signup() {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!username || !email || !password || !confirmPassword) {
       toast.error("All fields are required.");
@@ -34,16 +41,26 @@ function Signup() {
       toast.error("Passwords do not match.");
       return;
     }
-    const result = signup({ name: username, email, phone: "", password, role });
-    if (result && result.error) {
-      toast.error(result.error);
-      return;
+    
+    setIsLoading(true);
+    try {
+      const result = await signup({ 
+        name: username, 
+        email, 
+        phone, 
+        password, 
+        role: 'user' // Default role set to user
+      });
+      
+      if (result.success) {
+        // Navigate to user dashboard since all new users are 'user' role
+        navigate("/dashboard/user");
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    toast.success("Signup successful! You are now logged in.");
-    // Redirect based on role
-    if (result.role === "admin") navigate("/dashboard/admin");
-    else if (result.role === "owner") navigate("/dashboard/owner");
-    else navigate("/dashboard/user");
   };
 
   return (
@@ -69,6 +86,14 @@ function Signup() {
             placeholder="Email"
             required
           />
+          <label htmlFor="phone" style={{ display: "none" }}>Phone</label>
+          <input
+            id="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Phone (optional)"
+          />
           <label htmlFor="password" style={{ display: "none" }}>Password</label>
           <input
             id="password"
@@ -87,8 +112,45 @@ function Signup() {
             placeholder="Confirm Password"
             required
           />
+<<<<<<< HEAD
 
           <button type="submit">Sign Up</button>
+=======
+          <label htmlFor="role" style={{ display: "none" }}>Role</label>
+          <select
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <option value="">Select user role please</option>
+            <option value="user">User</option>
+            <option value="owner">Owner</option>
+            <option value="admin">Admin</option>
+          </select>
+          {role === 'owner' && (
+            <>
+              <label htmlFor="businessName" style={{ display: "none" }}>Business Name</label>
+              <input
+                id="businessName"
+                type="text"
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                placeholder="Business Name"
+              />
+            </>
+          )}
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            style={{
+              backgroundColor: isLoading ? '#94a3b8' : '#2563eb',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {isLoading ? 'Creating Account...' : 'Sign Up'}
+          </button>
+>>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
         </form>
       </div>
     </div>

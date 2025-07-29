@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from './AuthContext';
 
 const DataContext = createContext();
 
@@ -45,6 +46,34 @@ export function DataProvider({ children }) {
   const [users, setUsers] = useState(initialUsers);
   const [payments, setPayments] = useState([]);
 
+  // API helper functions for backend integration
+  const fetchFromAPI = async (endpoint, options = {}) => {
+    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+    const token = localStorage.getItem('psf_token');
+    
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'API request failed');
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('API Error:', error);
+      throw error;
+    }
+  };
   const addLot = (lot) => {
     setLots((prev) => [
       ...prev,
@@ -125,7 +154,8 @@ export function DataProvider({ children }) {
       spaces, addParkingSpace, editParkingSpace, deleteParkingSpace,
       bookings, addBooking, deleteBooking,
       users, setUsers, deleteUser, updateBookingStatus,
-      payments, addPayment
+      payments, addPayment,
+      fetchFromAPI
     }}>
       {children}
     </DataContext.Provider>

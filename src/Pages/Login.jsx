@@ -33,6 +33,7 @@ function Login() {
       }
     } catch (error) {
       console.error('Login error:', error);
+      toast.error('Login failed. Please check your credentials.');
     } finally {
       setIsLoading(false);
     }

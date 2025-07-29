@@ -2,6 +2,17 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+<<<<<<< HEAD
+=======
+const path = require('path');
+require('dotenv').config();
+
+const authRoutes = require('./routes/auth');
+const contactRoutes = require('./routes/contact');
+const parkingSpaceRoutes = require('./routes/parkingSpaces');
+const bookingRoutes = require('./routes/bookings');
+const adminRoutes = require('./routes/admin');
+>>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -14,7 +25,50 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
+<<<<<<< HEAD
 app.use(express.urlencoded({ extended: true }));
+=======
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Static files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Database connection
+const uri = process.env.ATLAS_URI;
+if (!uri) {
+  console.error('ATLAS_URI environment variable is not set');
+  process.exit(1);
+}
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log('✅ MongoDB database connection established');
+})
+.catch((error) => {
+  console.error('❌ MongoDB connection error:', error);
+  process.exit(1);
+});
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/contact', contactRoutes);
+app.use('/api/parking-spaces', parkingSpaceRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Parking Space Management API is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+>>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
 
 // Root endpoint
 app.get('/', (req, res) => {
