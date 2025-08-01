@@ -65,13 +65,15 @@ router.post('/register', [
     res.status(201).json({
       success: true,
       message: 'User registered successfully',
-      token,
-      user: {
-        id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        role: newUser.role,
-        phone: newUser.phone
+      data: {
+        token,
+        user: {
+          id: newUser._id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+          phone: newUser.phone
+        }
       }
     });
 
@@ -130,13 +132,15 @@ router.post('/login', [
     res.json({
       success: true,
       message: 'Login successful',
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          phone: user.phone
+        }
       }
     });
 
@@ -175,7 +179,9 @@ router.get('/me', async (req, res) => {
 
     res.json({
       success: true,
-      user
+      data: {
+        user
+      }
     });
 
   } catch (error) {

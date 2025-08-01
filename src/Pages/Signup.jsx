@@ -9,13 +9,7 @@ function Signup() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-<<<<<<< HEAD
-  const [role, setRole] = useState("user");
-=======
-  const [role, setRole] = useState("");
-  const [businessName, setBusinessName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
->>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
   const navigate = useNavigate();
   const { signup } = useAuth();
 
@@ -100,7 +94,7 @@ function Signup() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password (min 6 chars)"
+            placeholder="Password"
             required
           />
           <label htmlFor="confirmPassword" style={{ display: "none" }}>Confirm Password</label>
@@ -112,34 +106,6 @@ function Signup() {
             placeholder="Confirm Password"
             required
           />
-<<<<<<< HEAD
-
-          <button type="submit">Sign Up</button>
-=======
-          <label htmlFor="role" style={{ display: "none" }}>Role</label>
-          <select
-            id="role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            required
-          >
-            <option value="">Select user role please</option>
-            <option value="user">User</option>
-            <option value="owner">Owner</option>
-            <option value="admin">Admin</option>
-          </select>
-          {role === 'owner' && (
-            <>
-              <label htmlFor="businessName" style={{ display: "none" }}>Business Name</label>
-              <input
-                id="businessName"
-                type="text"
-                value={businessName}
-                onChange={(e) => setBusinessName(e.target.value)}
-                placeholder="Business Name"
-              />
-            </>
-          )}
           <button 
             type="submit" 
             disabled={isLoading}
@@ -150,11 +116,10 @@ function Signup() {
           >
             {isLoading ? 'Creating Account...' : 'Sign Up'}
           </button>
->>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
         </form>
       </div>
     </div>
   );
 }
 
-export default Signup; 
+export default Signup;

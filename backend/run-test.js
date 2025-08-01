@@ -1,9 +1,9 @@
 require('dotenv').config();
 const http = require('http');
 
-console.log('🚀 Testing Main Server Startup...\n');
+console.log(' Testing Main Server Startup...\n');
 
-// Function to test HTTP endpoint
+
 function testEndpoint(options, expectedStatus = 200) {
   return new Promise((resolve, reject) => {
     const req = http.request(options, (res) => {

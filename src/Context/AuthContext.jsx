@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 const AuthContext = createContext();
 
-// API Base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 // API Helper Functions
 const apiCall = async (endpoint, options = {}) => {
@@ -24,16 +24,42 @@ const apiCall = async (endpoint, options = {}) => {
   }
 
   try {
-    const response = await fetch(url, config);
-    const data = await response.json();
+    console.log('Making API call to:', url);
+    console.log('Config:', config);
     
+    const response = await fetch(url, config);
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+    
+    // Check if response is ok
     if (!response.ok) {
-      throw new Error(data.message || 'API request failed');
+      // Try to get error message from response
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch (e) {
+        // If JSON parsing fails, use status text
+        errorMessage = response.statusText || errorMessage;
+      }
+      throw new Error(errorMessage);
     }
     
+    // Check if response has content
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server did not return JSON response');
+    }
+    
+    const data = await response.json();
+    console.log('Response data:', data);
     return data;
+    
   } catch (error) {
     console.error('API Error:', error);
+    if (error.name === 'SyntaxError' && error.message.includes('JSON')) {
+      throw new Error('Server returned invalid response. Please check if the backend is running correctly.');
+    }
     throw error;
   }
 };
@@ -42,7 +68,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check for existing token on app load
+  
   useEffect(() => {
     const checkAuth = async () => {
       const token = localStorage.getItem('psf_token');
@@ -72,7 +98,7 @@ export function AuthProvider({ children }) {
       
       const { user: userData, token } = response.data;
       
-      // Store token and user data
+      
       localStorage.setItem('psf_token', token);
       localStorage.setItem('psf_user', JSON.stringify(userData));
       setUser(userData);
@@ -99,6 +125,7 @@ export function AuthProvider({ children }) {
     try {
       setLoading(true);
       console.log('Attempting signup with:', { name, email, phone, role });
+      
       const response = await apiCall('/auth/register', {
         method: 'POST',
         body: JSON.stringify({ 
@@ -111,25 +138,34 @@ export function AuthProvider({ children }) {
         }),
       });
       
-      const { user: userData, token } = response.data;
+      console.log('Signup response:', response);
       
-      // Store token and user data
+      
+      if (!response.success || !response.token || !response.user) {
+        throw new Error(response.message || 'Invalid response from server');
+      }
+      
+      const { user: userData, token } = response;
+      
+    
       localStorage.setItem('psf_token', token);
       localStorage.setItem('psf_user', JSON.stringify(userData));
       setUser(userData);
       
-      toast.success('Registration successful!');
+      toast.success('Account created successfully!');
       return { success: true, user: userData };
+      
     } catch (error) {
       console.error('Signup error:', error);
-      toast.error(error.message || 'Registration failed');
-      return { success: false, error: error.message };
+      const errorMessage = error.message || 'Signup failed. Please try again.';
+      toast.error(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
   };
 
-  // API helper function for authenticated requests
+  
   const apiRequest = async (endpoint, options = {}) => {
     return await apiCall(endpoint, options);
   };

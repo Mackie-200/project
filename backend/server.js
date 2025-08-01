@@ -2,17 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-<<<<<<< HEAD
-=======
 const path = require('path');
-require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const contactRoutes = require('./routes/contact');
 const parkingSpaceRoutes = require('./routes/parkingSpaces');
 const bookingRoutes = require('./routes/bookings');
 const adminRoutes = require('./routes/admin');
->>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -25,9 +21,6 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
-<<<<<<< HEAD
-app.use(express.urlencoded({ extended: true }));
-=======
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Static files
@@ -46,6 +39,7 @@ mongoose.connect(uri, {
 })
 .then(() => {
   console.log('✅ MongoDB database connection established');
+  console.log(`📊 Database: ${mongoose.connection.name}`);
 })
 .catch((error) => {
   console.error('❌ MongoDB connection error:', error);
@@ -58,17 +52,6 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/parking-spaces', parkingSpaceRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Parking Space Management API is running',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
-  });
-});
->>>>>>> 39bfd5663d2ab0494bbb10eda3e09acbcd9a6811
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -96,28 +79,15 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Import and use routes
-try {
-  console.log('📋 Loading API routes...');
-  
-  const authRoutes = require('./routes/auth');
-  const contactRoutes = require('./routes/contact');
-  const adminRoutes = require('./routes/admin');
-  const parkingSpaceRoutes = require('./routes/parkingSpaces');
-  const bookingRoutes = require('./routes/bookings');
-
-  // API Routes
-  app.use('/api/auth', authRoutes);
-  app.use('/api/contact', contactRoutes);
-  app.use('/api/parking-spaces', parkingSpaceRoutes);
-  app.use('/api/bookings', bookingRoutes);
-  app.use('/api/admin', adminRoutes);
-
-  console.log('✅ All routes loaded successfully');
-} catch (error) {
-  console.error('❌ Error loading routes:', error.message);
-  console.log('Server will continue without some routes...');
-}
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Parking Space Management API is running',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -137,51 +107,16 @@ app.use((req, res) => {
   });
 });
 
-// Database connection
-const mongoUri = process.env.ATLAS_URI || 'mongodb://localhost:27017/parking-management';
-
-console.log('🔗 Connecting to MongoDB...');
-
-mongoose.connect(mongoUri, {
-  serverSelectionTimeoutMS: 10000,
-})
-  .then(() => {
-    console.log('✅ Connected to MongoDB successfully');
-    console.log(`📊 Database: ${mongoose.connection.name}`);
-    
-    // Start server
-    app.listen(port, () => {
-      console.log(`🚀 Server running on http://localhost:${port}`);
-      console.log('📋 Available endpoints:');
-      console.log(`   GET  http://localhost:${port}/`);
-      console.log(`   GET  http://localhost:${port}/health`);
-      console.log(`   POST http://localhost:${port}/api/auth/register`);
-      console.log(`   POST http://localhost:${port}/api/auth/login`);
-      console.log(`   GET  http://localhost:${port}/api/parking-spaces`);
-      console.log(`   GET  http://localhost:${port}/api/bookings`);
-      console.log(`   GET  http://localhost:${port}/api/admin/dashboard`);
-      console.log('🎉 Backend server is ready for frontend integration!');
-    });
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection failed:', err.message);
-    console.log('🔄 Starting server without database connection...');
-    
-    
-    
-    app.listen(port, () => {
-      console.log(`🚀 Server running on http://localhost:${port} (without database)`);
-      console.log('⚠️  Database connection failed - some features may not work');
-    });
-  });
-
-// Graceful shutdown - TEMPORARILY DISABLED FOR TESTING
-/*
-process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down server...');
-  mongoose.connection.close(() => {
-    console.log('📴 Database connection closed');
-    process.exit(0);
-  });
+// Start server
+app.listen(port, () => {
+  console.log(`🚀 Server running on http://localhost:${port}`);
+  console.log('📋 Available endpoints:');
+  console.log(`   GET  http://localhost:${port}/`);
+  console.log(`   GET  http://localhost:${port}/health`);
+  console.log(`   POST http://localhost:${port}/api/auth/register`);
+  console.log(`   POST http://localhost:${port}/api/auth/login`);
+  console.log(`   GET  http://localhost:${port}/api/parking-spaces`);
+  console.log(`   GET  http://localhost:${port}/api/bookings`);
+  console.log(`   GET  http://localhost:${port}/api/admin/dashboard`);
+  console.log('🎉 Backend server is ready for frontend integration!');
 });
-*/
