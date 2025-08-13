@@ -95,6 +95,8 @@ export function AuthProvider({ children }) {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       });
+
+      console.log( "response", response)
       
       const { user: userData, token } = response.data;
       

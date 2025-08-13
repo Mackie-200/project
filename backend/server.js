@@ -14,6 +14,8 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 console.log('🚀 Starting Parking Space Management Backend Server...');
+console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+console.log(`📡 Port: ${port}`);
 
 // Middleware
 app.use(cors({
@@ -108,7 +110,7 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
   console.log('📋 Available endpoints:');
   console.log(`   GET  http://localhost:${port}/`);
